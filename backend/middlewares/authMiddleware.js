@@ -16,6 +16,8 @@ const CACHE_MAX_SIZE = 500;
 const getCachedUser = async (userId) => {
   const cached = userCache.get(userId);
   if (cached && Date.now() - cached.ts < CACHE_TTL_MS) {
+    userCache.delete(userId);
+    userCache.set(userId, cached);
     return cached.user;
   }
 

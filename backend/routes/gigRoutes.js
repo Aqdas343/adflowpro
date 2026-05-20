@@ -2,6 +2,7 @@ const express = require('express');
 const {
   createGig, updateGig, submitGig, getActiveGigs, getGigBySlug, getGigById,
   getProviderGigs, getModerationQueue, moderateGig, adminActivateGig, adminGetAllGigs,
+  deleteGig,
 } = require('../controllers/gigController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
@@ -251,6 +252,8 @@ router.patch('/:id/submit', authMiddleware, roleMiddleware('provider'), joiMiddl
  *         description: Gig moderated
  */
 router.patch('/:id/moderate', authMiddleware, roleMiddleware('moderator', 'admin', 'super_admin'), joiMiddleware({ params: idParamSchema }), zodMiddleware(moderateGigSchema), moderateGig);
+
+router.delete('/:id', authMiddleware, roleMiddleware('provider'), joiMiddleware({ params: idParamSchema }), deleteGig);
 
 /**
  * @swagger

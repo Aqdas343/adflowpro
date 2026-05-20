@@ -284,6 +284,7 @@ module.exports = {
   getActiveGigs,
   getGigBySlug,
   getGigById,
+  deleteGig,
   getProviderGigs,
   getModerationQueue,
   moderateGig,

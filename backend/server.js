@@ -40,6 +40,37 @@ app.use('/api', limiter);
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
+const sanitizeObject = (value) => {
+  if (Array.isArray(value)) return value.map(sanitizeObject);
+  if (value && typeof value === 'object') {
+    return Object.entries(value).reduce((acc, [key, val]) => {
+      if (key.startsWith('$') || key.includes('.')) return acc;
+      acc[key] = sanitizeObject(val);
+      return acc;
+    }, {});
+  }
+  return value;
+};
+
+const sanitizeRequest = (req, res, next) => {
+  req.body = sanitizeObject(req.body);
+  req.query = sanitizeObject(req.query);
+  req.params = sanitizeObject(req.params);
+  next();
+};
+
+const clientUrl = process.env.CLIENT_URL || '*';
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', clientUrl);
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
+
+app.use(sanitizeRequest);
+
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }

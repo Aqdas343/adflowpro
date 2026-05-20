@@ -40,7 +40,7 @@ function StatCard({ label, value, sub, color = 'text-gray-900' }) {
     <div className="stat-card">
       <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-2">{label}</p>
       <p className={`text-2xl font-bold ${color}`}>{value}</p>
-      {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
+      {sub && <div className="text-xs text-gray-400 mt-1">{sub}</div>}
     </div>
   );
 }
